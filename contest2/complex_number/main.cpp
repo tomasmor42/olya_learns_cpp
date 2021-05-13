@@ -7,11 +7,6 @@ class Complex{
             : real_(real), image_(image) {
         }
 
-        explicit Complex(int i)
-                : real_(i),
-                  image_(0) {
-        }
-
         explicit Complex(double d)
                 : real_(d),
                   image_(0) {
@@ -76,11 +71,6 @@ class Complex{
     double Im() const {
         return image_;
     }
-
-    friend Complex operator+(const Complex& lhs, const Complex& rhs);
-    friend Complex operator-(const Complex& lhs, const Complex& rhs);
-    friend Complex operator+(double lhs, const Complex& rhs);
-    friend Complex operator-(double lhs, const Complex& rhs);
 
     double real_;
     double image_;

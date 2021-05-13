@@ -1,27 +1,15 @@
 #include <iostream>
 #include <stdexcept>
 
-int getNumberOfDays(int month, int year) {
-    int days[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-    if (year % 4 == 0) {
-        if (month == 2) {return 29;}
-    }
-    return days[month];
-}
-
-int number_of_leap_days(int year1, int month1, int year2) {
-    if (month1 <= 2) {
-        year1 -= 1;
-    }
-    int leap_days = 0;
-    while (year2 < year1) {
-        if (year1 % 4 == 0) {
-            leap_days += 1;
-        }
-        year1 -= 1;
-    }
-    return leap_days;
-}
+int FEBRUARY = 2;
+int YEAR_OF_THE_BEGINNING = 1970;
+int YEAR_OF_THE_END = 2099;
+int NUMBER_OF_MONTH = 12;
+int NUMBER_OF_DAYS = 365;
+int LAST_DAY = 31;
+int FEBRUARY_DAYS = 28;
+int LEAP_YEAR_PERIOD = 4;
+int DAYS[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 class Date{
 public:
@@ -29,22 +17,42 @@ public:
         day_ = day;
         month_ = month;
         year_ = year;
-        if (year > 2099 || year < 1970) {
+        if (year > YEAR_OF_THE_END || year < YEAR_OF_THE_BEGINNING) {
             throw std::invalid_argument("Invalid year");
         }
-        if (month_ > 12 || month_ <1 ){
+        if (month_ > NUMBER_OF_MONTH || month_ < 1 ){
             throw std::invalid_argument("Invalid month");
         }
         if (day_ < 1 || day_ > getNumberOfDays(month_, year_)) {
             throw std::invalid_argument("Invalid number of days");
         }
     }
+    static int getNumberOfDays(int month, int year) {
+
+        if (year % LEAP_YEAR_PERIOD == 0) {
+            if (month == FEBRUARY) {return FEBRUARY_DAYS + 1;}
+        }
+        return DAYS[month];
+    }
+    static int number_of_leap_days(int year1, int month1, int year2) {
+        if (month1 <= FEBRUARY) {
+            year1 -= 1;
+        }
+        int leap_days = 0;
+        while (year2 < year1) {
+            if (year1 % LEAP_YEAR_PERIOD == 0) {
+                leap_days += 1;
+            }
+            year1 -= 1;
+        }
+        return leap_days;
+    }
 
     explicit Date (const int days) {
-        int full_years = days / 365;
-        int year = 1970 + full_years;
-        int leap_days = number_of_leap_days(year, 12, 1970);
-        int day = days % 365 - leap_days;
+        int full_years = days / NUMBER_OF_DAYS;
+        int year = YEAR_OF_THE_BEGINNING + full_years;
+        int leap_days = number_of_leap_days(year, NUMBER_OF_MONTH, YEAR_OF_THE_BEGINNING);
+        int day = days % NUMBER_OF_DAYS - leap_days;
         int month = 0;
         while (day > getNumberOfDays(month, year)) {
             day -= getNumberOfDays(month, year);
@@ -69,14 +77,14 @@ public:
 
     Date& operator++() {
         if (day_ != getNumberOfDays(month_, year_)) {
-                day_ += 1;
-            } else {
+                day_ ++;
+        } else {
             day_ = 1;
-            if (month_ == 12) {
+            if (month_ == NUMBER_OF_MONTH) {
                 month_ = 1;
-                year_ += 1;
+                year_ ++;
                 } else {
-                month_ +=1;
+                month_ ++;
             }
             }
 
@@ -85,26 +93,26 @@ public:
     };
     Date& operator--(){
         if (day_ != 1) {
-            day_ -= 1;
+            day_ --;
         } else {
             if (month_ != 1) {
-                month_ -= 1;
+                month_ --;
                 day_ = getNumberOfDays(month_, year_);
             } else {
-                day_ = 31;
-                month_ = 12;
-                year_ -= 1;
+                day_ = LAST_DAY;
+                month_ = NUMBER_OF_MONTH;
+                year_ --;
             }
         }
         return *this;
     }
 
     static int daysFromTheBeginningOfTime(const Date date){
-        int full_years = date.year_ - 1970;
+        int full_years = date.year_ - YEAR_OF_THE_BEGINNING;
 
-        int leap_years = number_of_leap_days(date.year_, date.month_, 1970);
+        int leap_years = number_of_leap_days(date.year_, date.month_, YEAR_OF_THE_BEGINNING);
 
-        int days = 365 * full_years + leap_years;
+        int days = NUMBER_OF_DAYS * full_years + leap_years;
         int month = date.month_;
         while (--month)
         {
